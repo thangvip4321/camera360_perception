@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+
+<launch>
+	<arg name="camera_name" default="camera360" /> 
+
+	<arg name="front_lens_name" default="front_lens"/>
+	<arg name="rear_lens_name" default="rear_lens"/> 
+
+	<!-- =========================================================================================================== -->
+	<!-- Initialize nodelet -->
+	<node pkg="nodelet" type="nodelet" name="$(arg camera_name)_nodelet_manager" args="manager"  respawn="true">
+		<param name="num_worker_threads" value="10"/>
+	</node>
+	<!-- =========================================================================================================== -->
+
+
+	<!-- =========================================================================================================== -->
+	<!-- Open bag file -->
+    <param name="use_sim_time" value="true"/>
+    <param name="enable_statistic" value="false"/>
+
+	<node pkg="rosbag" type="play" name="player"  args="--clock -l -r1 /home/bugcar/2022-04-22-17-33-49.bag" />
+	<!-- =========================================================================================================== -->
+
+
+	<!-- =========================================================================================================== -->
+	<!-- Create tf -->
+	<param name="robot_description" command="$(find xacro)/xacro $(find image_projection_demo)/urdf/insta360.urdf.xacro"/>
+	<node name="robot_state_publisher" type="robot_state_publisher" pkg="robot_state_publisher" />
+	<node pkg="tf2_ros" type="buffer_server" name="tf2_buffer_server" />
+	<!-- =========================================================================================================== -->
+
+
+	<!-- =========================================================================================================== -->
+	<!-- Publish the calibration -->
+	<node name="$(arg front_lens_name)" ns="$(arg camera_name)" pkg="kalibr_extended_camera_info_publisher"
+			type="camera_info_publisher_node" >
+		<param name="camera_ns" value="$(arg front_lens_name)"/>
+		<param name="frame_id" value="$(arg camera_name)_$(arg front_lens_name)_optical_frame"/>
+		<rosparam command="load" file="$(find image_projection_demo)/config/insta360_air/$(arg front_lens_name).yaml" subst_value="true" />
+	</node>
+
+	<node name="$(arg rear_lens_name)" ns="$(arg camera_name)" pkg="kalibr_extended_camera_info_publisher"
+			type="camera_info_publisher_node">
+		<param name="camera_ns" value="$(arg rear_lens_name)"/>
+		<param name="frame_id" value="$(arg camera_name)_$(arg rear_lens_name)_optical_frame"/>
+		<rosparam command="load" file="$(find image_projection_demo)/config/insta360_air/$(arg rear_lens_name).yaml" subst_value="true" />
+	</node>
+	<!-- =========================================================================================================== -->
+
+<!-- ======================================================== -->
+	<rosparam command="load" file="$(find camera360_perception)/configs/camera360_params_thang.yaml" subst_value="true"/>
+
+	<node pkg="camera360_perception_multithread" name="inference_cam_front" type="inference.py" >
+		<param name="orientation" value="front"/>
+	</node>
+	<node pkg="camera360_perception_multithread" name="inference_cam_left" type="inference.py" >
+		<param name="orientation" value="left"/>
+	</node>
+	<node pkg="camera360_perception_multithread" name="inference_cam_right" type="inference.py" >
+		<param name="orientation" value="right"/>
+	</node>
+	<node pkg="camera360_perception_multithread" name="inference_cam_rear" type="inference.py" >
+		<param name="orientation" value="rear"/>
+	</node>
+	<!-- <node pkg="camera360_perception" name="" type="test_multiprocess.py" output="screen" >
+	</node> -->
+
+</launch>

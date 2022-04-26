@@ -1,0 +1,3 @@
+[submodule "scripts/bugcar_image_segmentation"]
+	path = scripts/bugcar_image_segmentation
+	url = https://github.com/tranqkhue/bugcar_image_segmentation
