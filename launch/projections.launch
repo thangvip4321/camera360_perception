@@ -1,0 +1,83 @@
+<launch>	
+    <node pkg="nodelet" type="nodelet" name="front_projection_front_lens" 
+			args="load image_projection/PeriodicImageProjectionNodelet $(arg camera_name)_nodelet_manager" 
+			output="screen" respawn="true">
+
+		<rosparam command="load" file="$(find camera360_perception)/cfg/projections/$(arg front_lens_name)_front_projection.yaml" 
+				ns="/$(arg camera_name)/$(arg front_lens_name)/front_projection" subst_value="true"/>	
+
+		<remap from="/front_projection_front_lens" to="/$(arg camera_name)/$(arg front_lens_name)/front_projection"/> <!-- MUST HAVE -->
+		<remap from="/$(arg camera_name)/$(arg front_lens_name)/front_projection/projection" 
+				to="/$(arg camera_name)/$(arg front_lens_name)/front_projection/image_rect"/>
+	</node>
+
+	<!-- Left view pinhole projection front camera -->
+	<node pkg="nodelet" type="nodelet" name="left_projection_front_lens" 
+			args="load image_projection/PeriodicImageProjectionNodelet $(arg camera_name)_nodelet_manager" 
+			output="screen" respawn="true">
+
+		<rosparam command="load" file="$(find camera360_perception)/cfg/projections/$(arg front_lens_name)_left_projection.yaml" 
+				ns="/$(arg camera_name)/$(arg front_lens_name)/left_projection" subst_value="true"/>	
+
+		<remap from="/left_projection_front_lens" to="/$(arg camera_name)/$(arg front_lens_name)/left_projection"/> <!-- MUST HAVE -->
+		<remap from="/$(arg camera_name)/$(arg front_lens_name)/left_projection/projection" 
+				to="/$(arg camera_name)/$(arg front_lens_name)/left_projection/image_rect"/>
+	</node>
+
+	<!-- Right view pinhole projection front camera -->
+	<node pkg="nodelet" type="nodelet" name="right_projection_front_lens" 
+			args="load image_projection/PeriodicImageProjectionNodelet $(arg camera_name)_nodelet_manager" 
+			output="screen" respawn="true">
+
+		<rosparam command="load" file="$(find camera360_perception)/cfg/projections/$(arg front_lens_name)_right_projection.yaml" 
+				ns="/$(arg camera_name)/$(arg front_lens_name)/right_projection" subst_value="true"/>	
+
+		<remap from="/right_projection_front_lens" to="/$(arg camera_name)/$(arg front_lens_name)/right_projection"/> 
+		<remap from="/$(arg camera_name)/$(arg front_lens_name)/right_projection/projection" 
+				to="/$(arg camera_name)/$(arg front_lens_name)/right_projection/image_rect"/>
+	</node>
+	<!-- =========================================================================================================== -->
+
+
+	<!-- =========================================================================================================== -->
+	<!-- Rear camera projection -->
+
+	<!-- Front view pinhole projection rear camera -->
+	<node pkg="nodelet" type="nodelet" name="front_projection_rear_lens" 
+			args="load image_projection/PeriodicImageProjectionNodelet $(arg camera_name)_nodelet_manager" 
+			output="screen" respawn="true">
+
+		<rosparam command="load" file="$(find camera360_perception)/cfg/projections/$(arg rear_lens_name)_front_projection.yaml" 
+				ns="/$(arg camera_name)/$(arg rear_lens_name)/front_projection" subst_value="true"/>	
+
+		<remap from="/front_projection_rear_lens" to="/$(arg camera_name)/$(arg rear_lens_name)/front_projection"/> <!-- MUST HAVE -->
+		<remap from="/$(arg camera_name)/$(arg rear_lens_name)/front_projection/projection" 
+				to="/$(arg camera_name)/$(arg rear_lens_name)/front_projection/image_rect"/>
+	</node>
+
+	<!-- Left view pinhole projection rear camera -->
+	<node pkg="nodelet" type="nodelet" name="left_projection_rear_lens" 
+			args="load image_projection/PeriodicImageProjectionNodelet $(arg camera_name)_nodelet_manager" 
+			output="screen" respawn="true">
+
+		<rosparam command="load" file="$(find camera360_perception)/cfg/projections/$(arg rear_lens_name)_left_projection.yaml" 
+				ns="/$(arg camera_name)/$(arg rear_lens_name)/left_projection" subst_value="true"/>	
+
+		<remap from="/left_projection_rear_lens" to="/$(arg camera_name)/$(arg rear_lens_name)/left_projection"/> <!-- MUST HAVE -->
+		<remap from="/$(arg camera_name)/$(arg rear_lens_name)/left_projection/projection" 
+				to="/$(arg camera_name)/$(arg rear_lens_name)/left_projection/image_rect"/>
+	</node>
+
+	<!-- Right view pinhole projection rear camera -->
+	<node pkg="nodelet" type="nodelet" name="right_projection_rear_lens" 
+			args="load image_projection/PeriodicImageProjectionNodelet $(arg camera_name)_nodelet_manager" 
+			output="screen" respawn="true">
+
+		<rosparam command="load" file="$(find camera360_perception)/cfg/projections/$(arg rear_lens_name)_right_projection.yaml" 
+				ns="/$(arg camera_name)/$(arg rear_lens_name)/right_projection" subst_value="true"/>	
+
+		<remap from="/right_projection_rear_lens" to="/$(arg camera_name)/$(arg rear_lens_name)/right_projection"/> <!-- MUST HAVE -->
+		<remap from="/$(arg camera_name)/$(arg rear_lens_name)/right_projection/projection" 
+				to="/$(arg camera_name)/$(arg rear_lens_name)/right_projection/image_rect"/>
+	</node>
+</launch>	

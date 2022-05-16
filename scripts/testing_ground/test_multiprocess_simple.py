@@ -25,7 +25,7 @@ from faster_fifo import Queue
 import faster_fifo_reduction
 
 class ROS_handler:
-	def __init__(self, publishing_topic,camera:BaseCamera):
+	def __init__(self, publishing_topic,camera):
 		self.publishing_topic  = publishing_topic
 		self.Publisher = rospy.Publisher(self.publishing_topic, OccupancyGrid, queue_size=1)
 		self.camera = camera

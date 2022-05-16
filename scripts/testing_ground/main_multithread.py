@@ -1,11 +1,10 @@
 from time import time
 import numpy as np
 import cv2
-from bugcar_image_segmentation.bev import bev_transform_tools
-from bugcar_image_segmentation.models import ENET
-from bugcar_image_segmentation.occgrid_to_ros import convert_to_occupancy_grid_msg
-from cameraType.baseCamera import BaseCamera
-from cameraType.ros_camera import ROSCamera, ROSStitchCamera
+from camera360_perception.bugcar_image_segmentation.bev import bev_transform_tools
+from camera360_perception.bugcar_image_segmentation.models import ENET
+from camera360_perception.bugcar_image_segmentation.occgrid_to_ros import convert_to_occupancy_grid_msg
+from camera360_perception.camera_handlers.insta360 import Insta360Camera,Insta360StitchCamera
 import tensorflow as tf
 import rospy
 from sensor_msgs.msg import Image
@@ -21,7 +20,7 @@ if gpus:
     except RuntimeError as e:
         print(e)
 class ROS_handler:
-	def __init__(self, publishing_topic,camera:BaseCamera):
+	def __init__(self, publishing_topic,camera):
 		self.publishing_topic  = publishing_topic
 		self.Publisher = rospy.Publisher(self.publishing_topic, OccupancyGrid, queue_size=1)
 		self.camera = camera
