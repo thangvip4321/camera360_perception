@@ -1,5 +1,5 @@
-#!/home/tranquockhue/anaconda3/envs/deep_planner/bin/python
 #!/home/bugcar/miniconda3/envs/tf2.4/bin/python
+#!/home/tranquockhue/anaconda3/envs/deep_planner/bin/python
 import cv2
 import numpy as np
 import time
@@ -45,8 +45,8 @@ if (__name__=="__main__"):
 		if (stitched_img.all() != None):
 			msg = bridge.cv2_to_compressed_imgmsg(stitched_img)
 			pub.publish(msg)
-			cv2.imshow("Stitched",  cv2.resize(stitched_img, None, fx=1.0, fy=1.0))
-			cv2.imshow("resized Stitched",  cv2.resize(stitched_img,(512,256)))
+			# cv2.imshow("Stitched",  cv2.resize(stitched_img, None, fx=1.0, fy=1.0))
+			# cv2.imshow("resized Stitched",  cv2.resize(stitched_img,(512,256)))
 
 		key =cv2.waitKey(1)
 		if(key== ord('q')):

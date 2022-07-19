@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<launch>
+	<arg name="camera_name" default="camera360" /> 
+
+	<arg name="front_lens_name" default="front_lens"/>
+	<arg name="rear_lens_name" default="rear_lens"/> 
+
+	<!-- =========================================================================================================== -->
+	<!-- Initialize nodelet -->
+	<node pkg="nodelet" type="nodelet" name="$(arg camera_name)_nodelet_manager" args="manager" output="screen" respawn="true">
+		<param name="num_worker_threads" value="16"/>
+	</node>
+	<!-- =========================================================================================================== -->
+
+
+
+	<!-- =========================================================================================================== -->
+	<!-- Create tf -->
+	<param name="robot_description" command="$(find xacro)/xacro $(find camera360_perception)/urdf/insta360.urdf.xacro"/>
+	<node name="robot_state_publisher" type="robot_state_publisher" pkg="robot_state_publisher" output="screen"/>
+	<node pkg="tf2_ros" type="buffer_server" name="tf2_buffer_server" output="screen"/>
+	
+
+<!-- ======================================================== -->
+	<rosparam command="load" file="$(find camera360_perception)/cfg/camera360_params_thang.yaml" subst_value="true"/>
+	<arg name="inference_argument" default="-v" /> 
+	<node pkg="camera360_perception" name="inference_cam_front" type="inference.py" args="$(arg inference_argument)" output="screen">
+		<param name="orientation" value="front"/>
+	</node>
+
+
+</launch>

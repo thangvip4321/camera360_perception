@@ -1,7 +1,7 @@
 update_rate: 30
 always_recompute_mapping: false
 base_frame: $(arg camera_name)_$(arg front_lens_name)_link
-pose: [0, 0, 0, 0, 0.26179938783, 1.570796327]
+pose: [0, 0, 0, 0, 0.15, 1.570796327]
 virtual_sensor_frame: left_projection_$(arg front_lens_name)_frame
 virtual_sensor_optical_frame: left_projection_$(arg front_lens_name)_optical_frame
 projection_type: image_projection_plugins::PinholeProjection

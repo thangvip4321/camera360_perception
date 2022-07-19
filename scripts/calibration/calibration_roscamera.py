@@ -1,5 +1,5 @@
-#!/home/tranquockhue/anaconda3/envs/deep_planner/bin/python
 #!/home/bugcar/miniconda3/envs/tf2.4/bin/python
+#!/home/tranquockhue/anaconda3/envs/deep_planner/bin/python
 #!/home/tranquockhue/anaconda3/envs/cvdl/bin/python
 import cv2
 import numpy as np

@@ -20,7 +20,7 @@
 	<!-- Connect to 360 degree camera -->
 	<include file="$(find camera360_perception)/launch/camera.launch" pass_all_args="true"/>
 	<!-- =========================================================================================================== -->
-	<!-- <include file="$(find camera360_perception)/launch/projections.launch" pass_all_args="true"/> -->
+	<include file="$(find camera360_perception)/launch/projections.launch" pass_all_args="true"/>
 
 	<!-- <node pkg="nodelet" type="nodelet" name="right_projection_front_lens_full" 
 			args="load image_projection/PeriodicImageProjectionNodelet $(arg camera_name)_nodelet_manager" 
@@ -32,6 +32,11 @@
 		<remap from="/$(arg camera_name)/$(arg front_lens_name)/right_projection/projection" 
 				to="/$(arg camera_name)/$(arg front_lens_name)/right_projection/image_rect/full"/>
 	</node> -->
+	<arg name="inference_argument" default="" /> 
+	<node pkg="camera360_perception" name="inference_cam_rear" type="inference.py" args="$(arg inference_argument)" output="screen">
+		<param name="orientation" value="rear"/>
+		<remap from='rear' to='rear_test'/>
+	</node>
 	<!-- =========================================================================================================== -->
 	<!-- Create tf -->
 

@@ -8,7 +8,8 @@ camera360_insta: {
     bev_calib_file: "$(find camera360_perception)/cfg/bev/bev_front.json",
     camera_intrinsic_file_path: "$(find camera360_perception)/cfg/cameras_info/insta360_air/camera_intrinsic.yaml",
     base_frame: "camera360_center_link",
-    pose_to_base_frame: [0,0,0,0,0,0],
+    pose_to_base_frame: [0,0,0,0,0,0], # it is not really pose to the base frame, 
+    # the first 3 is the translation from the origin of the base_frame to the point of view of the camera in bev_frame
     occ_grid_size: [20,30]
   },
 
@@ -22,8 +23,8 @@ camera360_insta: {
     camera_intrinsic_file_path: "$(find camera360_perception)/cfg/cameras_info/insta360_air/camera_intrinsic.yaml",
 
     base_frame: "camera360_center_link",
-    pose_to_base_frame: [0,0,0,0,0,3.1415],
-    occ_grid_size: [20,30]
+    pose_to_base_frame: [0,0,0,0,0,3.1415], 
+    occ_grid_size: [20,30] #width,height
 
   },
 

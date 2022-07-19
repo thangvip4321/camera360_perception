@@ -9,41 +9,26 @@
 	<!-- =========================================================================================================== -->
 	<!-- Initialize nodelet -->
 	<node pkg="nodelet" type="nodelet" name="$(arg camera_name)_nodelet_manager" args="manager" output="screen" respawn="true">
-		<param name="num_worker_threads" value="16"/>
+		<param name="num_worker_threads" value="9"/>
 	</node>
 	<!-- =========================================================================================================== -->
 
-
+	<param name="robot_description" command="$(find xacro)/xacro $(find camera360_perception)/urdf/insta360.urdf.xacro"/>
+	<node name="robot_state_publisher" type="dynamic_robot_state_publisher" pkg="dynamic_robot_state_publisher" output="screen"/>
+	<node pkg="tf2_ros" type="buffer_server" name="tf2_buffer_server" output="screen"/>
 	<!-- =========================================================================================================== -->
 	<!-- Connect to 360 degree camera -->
-	<!-- =========================================================================================================== -->
-
-
-	<!-- =========================================================================================================== -->
-	<!-- Create tf -->
-	<param name="robot_description" command="$(find xacro)/xacro $(find camera360_perception)/urdf/insta360.urdf.xacro"/>
-	<node name="robot_state_publisher" type="robot_state_publisher" pkg="robot_state_publisher" output="screen"/>
-	<node pkg="tf2_ros" type="buffer_server" name="tf2_buffer_server" output="screen"/>
-	
-
-	<!-- =========================================================================================================== -->
 	<include file="$(find camera360_perception)/launch/camera.launch" pass_all_args="true"/>
-
 	<!-- =========================================================================================================== -->
-
-
-	<!-- =========================================================================================================== -->
-	<!-- Front camera projection -->
 	<include file="$(find camera360_perception)/launch/projections.launch" pass_all_args="true"/>
-
-
-<!-- ======================================================== -->
 	<rosparam command="load" file="$(find camera360_perception)/cfg/camera360_params_thang.yaml" subst_value="true"/>
-	
 
 	<arg name="inference_argument" default="-v" /> 
-
-	<node pkg="camera360_perception" name="inference_cam_front" type="inference.py" args="$(arg inference_argument)" output="screen">
+	<node pkg="camera360_perception" name="inference_cam_rear" type="inference.py" args="$(arg inference_argument)" output="screen">
+		<param name="orientation" value="rear"/>
+		<remap from='rear' to='rear_test'/>
+	</node>
+    <node pkg="camera360_perception" name="inference_cam_front" type="inference.py" args="$(arg inference_argument)" output="screen">
 		<param name="orientation" value="front"/>
 	</node>
 	<node pkg="camera360_perception" name="inference_cam_left" type="inference.py" args="$(arg inference_argument)" output="screen">
@@ -52,10 +37,9 @@
 	<node pkg="camera360_perception" name="inference_cam_right" type="inference.py" args="$(arg inference_argument)" output="screen">
 		<param name="orientation" value="right"/>
 	</node>
-	<node pkg="camera360_perception" name="inference_cam_rear" type="inference.py" args="$(arg inference_argument)" output="screen">
-		<param name="orientation" value="rear"/>
-	</node>
-	<!-- <node pkg="camera360_perception" name="inference_all" type="inference_multithread.py" output="screen">
-	</node> -->
+	<!-- =========================================================================================================== -->
+	<!-- Create tf -->
+
+	<!-- =========================================================================================================== -->
 
 </launch>

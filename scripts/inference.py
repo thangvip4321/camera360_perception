@@ -1,5 +1,5 @@
-#!/home/tranquockhue/anaconda3/envs/deep_planner/bin/python
 #!/home/bugcar/miniconda3/envs/tf2.4/bin/python
+#!/home/tranquockhue/anaconda3/envs/deep_planner/bin/python
 import logging
 import os
 import time
@@ -29,7 +29,7 @@ print(args)
 
 logger = logging.getLogger(__name__)
 if(args.verbose):
-	log_level = logging.DEBUG
+	log_level = logging.INFO
 else:
 	log_level = logging.WARNING	
 logger.setLevel(log_level)
@@ -38,7 +38,6 @@ formatter = logging.Formatter('%(process)s-%(threadName)s-%(funcName)s_%(lineno)
 ch.setLevel(logging.DEBUG)
 ch.setFormatter(formatter)
 logger.addHandler(ch)
-
 
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
@@ -80,7 +79,6 @@ camera_file = params[orientations]['camera_intrinsic_file_path']
 stitcher = None
 
 
-
 assert (len(lens)==2) == (stitch_file !=""), "either 2 topic and 1 stitch file or 1 topic and 0 stitch file"
 if(len(lens)==2):
 	stitcher = Stitcher.createFromYaml(stitch_file=stitch_file)
@@ -92,6 +90,7 @@ bev_file = params[orientations]['bev_calib_file']
 frame_id = params[orientations]['base_frame']
 pose = params[orientations]['pose_to_base_frame']
 occ_grid_width,occ_grid_height=params[orientations]['occ_grid_size']
+pub_occ_ = rospy.Publisher("normal_"+orientations,OccupancyGrid,queue_size=2)
 
 bev_tool =bev_transform_tools.fromJSON(bev_file)
 FPS_LIMIT = 30
@@ -100,12 +99,14 @@ FPS_LIMIT = 30
 r = rospy.Rate(15)
 while not rospy.is_shutdown():
 	t0 = time.time()
+	print("ok")
 	img =sub_object[orientations].camera.get_bgr_frame()
-	if(logger.level <= logging.DEBUG):
+	if(logger.level == logging.INFO):
 		sub_object[orientations].publish_camera(img)
+	elif(logger.level == logging.DEBUG):
 		cv2.imshow("img "+orientations,img)
 		cv2.waitKey(1)
-	logger.debug("image shape {}".format(img.shape))
+		logger.debug("image shape {}".format(img.shape))
 	if (img is not None):
 		pass
 	else:
@@ -116,28 +117,29 @@ while not rospy.is_shutdown():
 	# #=======================================================================================================
 	# # Pre-process before feeding into deep learning model
 	front_pp =  model.preprocess(img)
-
 	#======================================================================================================
 	t1 = time.time()
-	front_segmented = model.predict(front_pp)[0]
+	segmented = model.predict(front_pp)[0]
 	t2 = time.time()
 	logger.info("inference time: {}".format(t2-t1))
 	if(logger.level <= logging.DEBUG):
-		cv2.imshow("segmented "+orientations,(front_segmented*100))
-	front_segmented = contour_noise_removal(front_segmented)
+		cv2.imshow("segmented "+orientations,(segmented*100))
+	# segmented = contour_noise_removal(segmented)
 	# cost 1% more cpu, contour
-	logger.debug("shape of segmented image {}, {}".format(front_segmented.shape,img.shape))
+	logger.debug("shape of segmented image {}, {}".format(segmented.shape,img.shape))
 	t = rospy.Time.now()
-	resized_img = cv2.resize(front_segmented,(bev_tool.input_height,bev_tool.input_width))
+	resized_img = cv2.resize(segmented,(bev_tool.input_height,bev_tool.input_width))
 	# cv2 resize cost  1-2% cpu
+	original_og = bev_tool.create_occupancy_grid(resized_img,occ_grid_width,occ_grid_height,cell_size_in_m)
 
-	og = bev_tool.create_occupancy_grid(resized_img,occ_grid_width,occ_grid_height,cell_size_in_m)
-	occ_grid_front = convert_to_occupancy_grid_msg(og,cell_size_in_m,occ_grid_width,occ_grid_height,t,frame_id,pose)
+
+
+	occ_grid_front = convert_to_occupancy_grid_msg(original_og,cell_size_in_m,occ_grid_width,occ_grid_height,t,frame_id,pose)
 	sub_object[orientations].publish_bev(occ_grid_front)
 	fps = 1/(time.time()-t0)
 	logger.info("fps: {}".format(fps))
 	logger.info("publish time {}".format(time.time()-t2))
-
+	
 	r.sleep()
 	# if (fps>FPS_LIMIT):
 	# 	time.sleep(1/FPS_LIMIT-1/fps)

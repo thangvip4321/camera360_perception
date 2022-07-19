@@ -2,7 +2,7 @@ update_rate: 30
 always_recompute_mapping: false
 base_frame: $(arg camera_name)_$(arg rear_lens_name)_link
 # pose: [-1, 0, 0, 0, 1.570796327, 0] #1.570796327 #1.308996939 #Rotate 15 degree down
-pose: [0, 0, 0, 0, 0.26179938783, 0] #1.570796327 #1.308996939 #Rotate 15 degree down
+pose: [0, 0, 0, 0, 0, 0] #1.570796327 #1.308996939 #Rotate 15 degree down
 virtual_sensor_frame: front_projection_$(arg rear_lens_name)_frame
 virtual_sensor_optical_frame: front_projection_$(arg rear_lens_name)_optical_frame
 projection_type: image_projection_plugins::PinholeProjection
